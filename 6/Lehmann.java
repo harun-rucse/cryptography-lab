@@ -14,11 +14,15 @@ public class Lehmann {
 
         for(int i=0; i<iteration; i++) {
             // Generate a random number between 2 and P-1
-            BigInteger a = new BigInteger(p.bitLength(), random);
-            a = a.mod(p.subtract(BigInteger.TWO)).add(BigInteger.TWO);
+            BigInteger a;
+            do {
+                a = new BigInteger(p.bitLength(), random);
+            } while (a.compareTo(BigInteger.TWO) < 0 || a.compareTo(p.subtract(BigInteger.ONE)) > 0);
 
             // Compute a^((P-1)/2) mod P
             BigInteger x = a.modPow(p.subtract(BigInteger.ONE).divide(BigInteger.TWO), p);
+
+            // If the result is not 1 or p-1, then n is composite
             if(!x.equals(BigInteger.ONE) && !x.equals(p.subtract(BigInteger.ONE))) {
                 return false;
             }

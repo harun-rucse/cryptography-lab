@@ -26,6 +26,7 @@ public class Onetimepad {
 
         // Read the key file
         String key = readFile("key.txt");
+        key = key.toUpperCase();
 
         String cipherText = encrypt(plainText, key);
         writeFile("ciphertext.txt", cipherText);
@@ -42,10 +43,18 @@ public class Onetimepad {
         for (int i = 0; i < plaintext.length(); i++) {
             char plainChar = plaintext.charAt(i);
             char keyChar = key.charAt(i);
-            char base = Character.isUpperCase(plainChar) ? 'A' : 'a';
 
-            char encryptedChar = (char) (((plainChar - base) + ( keyChar - 'A')) % 26 + base);
-            cipherText += encryptedChar;
+            if (Character.isUpperCase(plainChar)) {
+                int x = (plainChar - 'A' + keyChar - 'A') % 26;
+                x = x + 'A' + 1;
+                cipherText += (char) x;
+            } else if (Character.isLowerCase(plainChar)) {
+                int x = (plainChar - 'a' + keyChar - 'A') % 26;
+                x = x + 'a' + 1;
+                cipherText += (char) x;
+            } else {
+                cipherText += plainChar;
+            }
         }
         return cipherText;
     }
@@ -57,10 +66,24 @@ public class Onetimepad {
         for (int i = 0; i < ciphertext.length(); i++) {
             char cipherChar = ciphertext.charAt(i);
             char keyChar = key.charAt(i);
-            char base = Character.isUpperCase(cipherChar) ? 'A' : 'a';
-
-            char decryptedChar = (char) (((cipherChar - base) - ( keyChar - 'A') + 26) % 26 + base);
-            plainText += decryptedChar;
+            
+            if (Character.isUpperCase(cipherChar)) {
+                int x = cipherChar - 'A' - (keyChar - 'A');
+                if(x < 0) {
+                    x += 26;
+                }
+                x = x + 'A' - 1;
+                plainText += (char) x;
+            } else if (Character.isLowerCase(cipherChar)) {
+                int x = cipherChar - 'a' - (keyChar - 'A');
+                if(x < 0) {
+                    x += 26;
+                }
+                x = x + 'a' - 1;
+                plainText += (char) x;
+            } else {
+                plainText += cipherChar;
+            }
         }
         return plainText;
     }
